@@ -1,0 +1,18 @@
+---
+- name: create user
+  hosts: all
+  vars:
+#          root_path: /migcredit_credit_product_data_exch
+          user1: readlogs
+#          user2: mig_prod
+#          user3: mig_admin
+#          user4: veon_migcustom
+  tasks:
+          - name: create "{{ user1 }}"
+            user:
+                    name: "{{ user1 }}"
+                    shell: /bin/bash
+                    comment: "CRQ85685"
+                    home: "/export/home/{{ user1 }}"
+                    password: "$1$BmHSty4Y$lBtJJl1jlUcwtFlfUK9L01"
+...
