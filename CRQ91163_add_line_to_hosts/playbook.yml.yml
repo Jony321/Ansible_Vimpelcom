@@ -1,0 +1,7 @@
+---
+- name: create sftp catalogs and provide access
+  hosts: all
+  tasks:
+          - name: insert line to hosts
+
+...
