@@ -1,0 +1,211 @@
+---
+- name: create sftp catalogs and provide access
+  hosts: all
+  vars:
+          root_path: /migcredit_credit_product_data_exch
+          user1: mig_custom
+          user2: mig_prod
+          user3: mig_admin
+          user4: veon_migcustom
+  tasks:
+          - name: create "{{ user1 }}"
+            user:
+                    name: "{{ user1 }}"
+                    shell: /bin/false
+                    comment: "CRQ83786"
+                    home: "/export/home/{{ user1 }}"
+                    password: "$1$BmHSty4Y$l5oL2Hu1947pCiYbILocq0"
+
+          - name: create "{{ user2 }}"
+            user:
+                    name: "{{ user2 }}"
+                    shell: /bin/false
+                    comment: "CRQ83786"
+                    home: "/export/home/{{ user2 }}"
+                    password: "$1$bdmTSaib$dHPqieI7aFeqTMRwFxyzU/"
+
+          - name: create "{{ user3 }}"
+            user:
+                    name: "{{ user3 }}"
+                    shell: /bin/false
+                    comment: "CRQ83786"
+                    home: "/export/home/{{ user3 }}"
+                    password: "$1$Abagaote$V9b.UQOHN6EIKShghZbQD0"
+
+          - name: create "{{ user4 }}"
+            user:
+                    name: "{{ user4 }}"
+                    shell: /bin/false
+                    comment: "CRQ83786"
+                    home: "/export/home/{{ user4 }}"
+                    password: "$1$7Lrrdneu$OD4TaV74BfPrh7qjb8RI50"
+
+          - name: create root directory
+            file:
+                    path: "{{ root_path }}"
+                    state: directory
+                    mode: '0755'
+                    owner: root
+                    group: root
+
+          - name: create in directory
+            file:
+                    path: "{{ root_path }}/IN"
+                    state: directory
+                    mode: '0755'
+                    owner: root
+                    group: root
+
+          - name: create out directory
+            file:
+                    path: "{{ root_path }}/OUT"
+                    state: directory
+                    mode: '0755'
+                    owner: root
+                    group: root
+
+          - name: set ACLs to IN for "{{ user1 }}"
+            acl:
+                    name: "{{ root_path }}/IN"
+                    entity: "{{ user1 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+
+          - name: set defaults ACLs to IN for  "{{ user1 }}"
+            acl:
+                    name: "{{ root_path }}/IN"
+                    entity: "{{ user1 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+                    default: true
+
+          - name: set ACLs to OUT for "{{ user1 }}"
+            acl:
+                    name: "{{ root_path }}/OUT"
+                    entity: "{{ user1 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+
+          - name: set defaults ACLs to OUT for "{{ user1 }}"
+            acl:
+                    name: "{{ root_path }}/OUT"
+                    entity: "{{ user1 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+                    default: true
+
+          - name: set ACLs to IN for "{{ user2 }}"
+            acl:
+                    name: "{{ root_path }}/IN"
+                    entity: "{{ user2 }}"
+                    etype: user
+                    permissions: "rwX"
+                    state: present
+
+          - name: set defaults ACLs to IN for  "{{ user2 }}"
+            acl:
+                    name: "{{ root_path }}/IN"
+                    entity: "{{ user2 }}"
+                    etype: user
+                    permissions: "rwX"
+                    state: present
+                    default: true
+
+          - name: set ACLs to OUT for "{{ user2 }}"
+            acl:
+                    name: "{{ root_path }}/OUT"
+                    entity: "{{ user2 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+
+          - name: set defaults ACLs to OUT for "{{ user2 }}"
+            acl:
+                    name: "{{ root_path }}/OUT"
+                    entity: "{{ user2 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+                    default: true
+
+          - name: set ACLs to IN for "{{ user3 }}"
+            acl:
+                    name: "{{ root_path }}/IN"
+                    entity: "{{ user3 }}"
+                    etype: user
+                    permissions: "rwX"
+                    state: present
+
+          - name: set defaults ACLs to IN for  "{{ user3 }}"
+            acl:
+                    name: "{{ root_path }}/IN"
+                    entity: "{{ user3 }}"
+                    etype: user
+                    permissions: "rwX"
+                    state: present
+                    default: true
+
+          - name: set ACLs to OUT for "{{ user3 }}"
+            acl:
+                    name: "{{ root_path }}/OUT"
+                    entity: "{{ user3 }}"
+                    etype: user
+                    permissions: "rwX"
+                    state: present
+
+          - name: set defaults ACLs to OUT for "{{ user3 }}"
+            acl:
+                    name: "{{ root_path }}/OUT"
+                    entity: "{{ user3 }}"
+                    etype: user
+                    permissions: "rwX"
+                    state: present
+                    default: true
+
+          - name: set ACLs to IN for "{{ user4 }}"
+            acl:
+                    name: "{{ root_path }}/IN"
+                    entity: "{{ user4 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+
+          - name: set defaults ACLs to IN for  "{{ user4 }}"
+            acl:
+                    name: "{{ root_path }}/IN"
+                    entity: "{{ user4 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+                    default: true
+
+          - name: set ACLs to OUT for "{{ user4 }}"
+            acl:
+                    name: "{{ root_path }}/OUT"
+                    entity: "{{ user4 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+
+          - name: set defaults ACLs to OUT for "{{ user4 }}"
+            acl:
+                    name: "{{ root_path }}/OUT"
+                    entity: "{{ user4 }}"
+                    etype: user
+                    permissions: "rX"
+                    state: present
+                    default: true
+
+          - name: backup /etc/ssh/sshd_config
+            copy:
+                    src: /etc/ssh/sshd_config
+                    dest: /etc/ssh/sshd_config.bak
+
+#          - name: insert allow users to /etc/ssh/sshd_config
+#          I'm dont't know how add content to center of file, yet.
+#          make in manually.
+...
