@@ -1,0 +1,50 @@
+---
+- name: remove iptables rules
+  hosts: all
+  remote_user: jetinf
+  become: true
+  become_user: root
+  tasks:
+    - name: save current iptables configuration
+      raw: 'iptables-save > /etc/sysconfig/iptables_beforeCRQ52419_$(date +%d%m%y%H%M).bak'
+
+    - name: check iptables backup file exist
+      stat:
+        path: /etc/sysconfig/iptables_beforeCRQ52419.bak
+      register: iptables_backup_file
+
+    - name: removed to managed host destination rules
+      iptables: 
+        chain: INPUT
+        source: 10.50.225.42
+        destination: 0.0.0.0/24
+        destination_port: "{{ item.dport }}"
+        protocol: "{{ item.protocol }}"
+        jump: ACCEPT
+        comment: CRQ91938
+        state: absent
+      with_items:
+        - { dport: 8082, protocol: 'udp' }
+        - { dport: 8083, protocol: 'udp' }
+        - { dport: 8081, protocol: 'tcp' }
+      when: iptables_backup_file.stat.exists == True
+
+    - name: removed to managed host suorce rules
+      iptables:
+        chain: INPUT
+        source: 10.50.225.42
+        destination: 0.0.0.0/24
+        source_port: "{{ item.sport }}"
+        protocol: "{{ item.protocol }}"
+        jump: ACCEPT
+        comment: CRQ91938
+        state: absent
+      with_items:
+        - { sport: 80, protocol: 'tcp' }
+        - { sport: 443, protocol: 'tcp' }
+        - { sport: 8083, protocol: 'udp' }
+      when: iptables_backup_file.stat.exists == True
+
+    - name: save iptables rules
+      raw: 'service iptables save'
+...
