@@ -1,0 +1,37 @@
+---
+- name: add user with comments and sudoers
+  hosts: all
+  user: jetinf
+  become: true
+  tasks:
+    - name: create jetinf group
+      group:
+        gid: 330
+        name: jetinf
+        state: present
+        system: true
+
+    - name: user added
+      user:
+        comment: CRQ95177
+        create_home: true
+        home: /export/home/jetinf
+        name: jetinf
+        password: '$6$KOG2mHox$Gk/I8905E1GpSUl9.A7/dFiWmbnXUw1GpYTIkVjba8xJJPqaGIMnlzHLAsxt0WYel4n1dNj/vKHqYBOhoPUZ90'
+        shell: /bin/bash
+        state: present
+        system: true
+        uid: 330
+        group: jetinf
+
+    - name: added sudoer line
+      lineinfile:
+        backup: true
+        group: root
+        line: 'jetinf {{ ansible_hostname }} = (root) NOPASSWD: ALL,!/bin/su'
+        path: /etc/sudoers
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+...
