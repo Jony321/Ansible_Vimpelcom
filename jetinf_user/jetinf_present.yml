@@ -17,7 +17,7 @@
         create_home: true
         home: /export/home/jetinf
         name: jetinf
-        password: '$6$KOG2mHox$Gk/I8905E1GpSUl9.A7/dFiWmbnXUw1GpYTIkVjba8xJJPqaGIMnlzHLAsxt0WYel4n1dNj/vKHqYBOhoPUZ90'
+        password: 'some_hash'
         shell: /bin/bash
         state: present
         system: true
