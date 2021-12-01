@@ -1,0 +1,50 @@
+---
+- name: add sudo to nba hosts
+  hosts: all
+  user: root
+  vars:
+    user: pavansergeev
+    rfc: CRQ76750
+#    NOT WORKING IN PLAYS, DON'T KNOW WHY
+    sudo_tcpdump: /etc/sudoers.d/tcpdump
+    sudo_netstat: /etc/sudoers.d/netstat
+    sudoers: /etc/sudoers
+  tasks:
+    - name: does "{{ sudo_tcpdump }}" exist
+      stat:
+        path: "{{ sudo_tcpdump }}"
+      register: sudo_tcpdump
+
+    - name: does "{{ sudo_netstat }}" exist
+      stat:
+        path: "{{ sudo_netstat }}"
+      register: sudo_netstat
+
+    - name: sudo tcpdump
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+          {{ user }} {{ ansible_hostname }} = (setcap_tcpdump) NOPASSWD: /usr/sbin/tcpdump
+        path: /etc/sudoers.d/tcpdump
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: sudo_tcpdump.stat.exists
+
+    - name: sudo netstat
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+          {{ user }} {{ ansible_hostname }} = (root) NOPASSWD: /bin/netstat
+        path: /etc/sudoers.d/netstat
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: sudo_netstat.stat.exists
+...

@@ -1,0 +1,139 @@
+---
+- name: add sudo to nba hosts
+  hosts: nba
+  user: root
+  vars:
+    user: pavansergeev
+    rfc: CRQ76750
+#    NOT WORKING IN PLAYS, DON'T KNOW WHY
+#    sudo_filebeat: /etc/sudoers.d/filebeat
+#    sudo_node: /etc/sudoers.d/node
+#    sudo_vault: /etc/sudoers.d/vault
+#    sudoers: /etc/sudoers
+  tasks:
+    - name: does "{{ sudo_filebeat }}" exist
+      stat:
+        path: "{{ sudo_filebeat }}"
+      register: sudo_filebeat
+
+    - name: does "{{ sudo_node }}" exist
+      stat:
+        path: "{{ sudo_node }}"
+      register: sudo_node
+
+    - name: does "{{ sudo_vault }}" exist
+      stat:
+        path: "{{ sudo_vault }}"
+      register: sudo_vault
+
+    - name: sudo FILEBEAT
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+          {{ user }} {{ ansible_hostname }} = (root) NOPASSWD: FILEBEAT
+        path: /etc/sudoers.d/filebeat
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: sudo_filebeat.stat.exists
+
+    - name: sudo NODE
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+          {{ user }} {{ ansible_hostname }} = (root) NOPASSWD: NODE
+        path: /etc/sudoers.d/node
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: sudo_node.stat.exists
+
+    - name: sudo VAULT
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+          {{ user }} {{ ansible_hostname }} = (root) NOPASSWD: VAULT
+        path: /etc/sudoers.d/vault
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: sudo_vault.stat.exists
+
+    - name: Ensure Cmnd_Alias FILEBEAT exist in "{{ sudoers }}"
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^Cmnd_Alias FILEBEAT*'
+        state: absent
+      check_mode: yes
+      changed_when: false
+      register: filebeat_out
+
+    - name: Ensure Cmnd_Alias NODE exist in "{{ sudoers }}"
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^Cmnd_Alias NODE*'
+        state: absent
+      check_mode: yes
+      changed_when: false
+      register: node_out
+
+    - name: Ensure Cmnd_Alias VAULT exist in "{{ sudoers }}"
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^Cmnd_Alias VAULT*'
+        state: absent
+      check_mode: yes
+      changed_when: false
+      register: vault_out
+
+    - name: add filebeat to sudoers
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+          {{ user }} {{ ansible_hostname }} = (root) NOPASSWD: FILEBEAT
+        path: /etc/sudoers
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: (filebeat_out.found) and (sudo_filebeat.stat.exists == false)
+
+    - name: add node to sudoers
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+          {{ user }} {{ ansible_hostname }} = (root) NOPASSWD: NODE
+        path: /etc/sudoers
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: (node_out.found) and (sudo_node.stat.exists == false)
+
+    - name: add vault to sudoers
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+          {{ user }} {{ ansible_hostname }} = (root) NOPASSWD: VAULT
+        path: /etc/sudoers
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: (vault_out.found) and (sudo_vault.stat.exists == false)
+...

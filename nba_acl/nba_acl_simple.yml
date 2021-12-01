@@ -1,0 +1,144 @@
+---
+- name: add sudo to nba hosts
+  hosts: test
+  user: root
+  vars:
+    user: pavansergeev
+    rfc: CRQ76750
+# NOT WOEK IN PLAYS
+    d_filebeat: /etc/filebeat/
+    d_appuser: /opt/appuser/
+    d_jdk16: /opt/jdk1.6_34/
+    d_jdk17: /opt/jdk1/7_25/
+    d_docker: /var/lib/docker/
+  tasks:
+    - name: does "{{ d_filebeat }}" exist
+      stat:
+        path: /etc/filebeat/
+      register: d_filebeat
+
+    - name: does "{{ d_appuser }}" exist
+      stat:
+        path: /opt/appuser/
+      register: d_appuser
+
+    - name: does "{{ d_jdk16 }}" exist
+      stat:
+        path: /opt/jdk1.6_34/
+      register: d_jdk16
+
+    - name: does "{{ d_jdk17 }}" exist
+      stat:
+        path: /opt/jdk1/7_25/
+      register: d_jdk17
+
+    - name: does "{{ d_docker }}" exist
+      stat:
+        path: /var/lib/docker/
+      register: d_docker
+# ---------------------- DEFAULT ACL ----------------------------
+    - name: add default to "{{ d_filebeat }}"
+      acl:
+        default: true
+        entity: "{{ user }}"
+        etype: user
+        path: /etc/filebeat/
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_filebeat.stat.exists
+
+    - name: add default to "{{ d_appuser }}"
+      acl:
+        default: true
+        entity: "{{ user }}"
+        etype: user
+        path: /opt/appuser/
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_appuser.stat.exists
+
+    - name: add default to "{{ d_jdk16 }}"
+      acl:
+        default: true
+        entity: "{{ user }}"
+        etype: user
+        path: /opt/jdk1.6_34/
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_jdk16.stat.exists
+
+    - name: add default to "{{ d_jdk17 }}"
+      acl:
+        default: true
+        entity: "{{ user }}"
+        etype: user
+        path: /opt/jdk1/7_25/
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_jdk17.stat.exists
+
+    - name: add default to "{{ d_docker }}"
+      acl:
+        default: true
+        entity: "{{ user }}"
+        etype: user
+        path: /var/lib/docker/
+        permissions: rx
+        recursive: true
+        state: present
+      when: d_docker.stat.exists
+# --------------------------- SIMPLE ACL ----------------------------------
+    - name: add default to "{{ d_filebeat }}"
+      acl:
+        entity: "{{ user }}"
+        etype: user
+        path: /etc/filebeat/
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_filebeat.stat.exists
+
+    - name: add default to "{{ d_appuser }}"
+      acl:
+        entity: "{{ user }}"
+        etype: user
+        path: /opt/appuser/
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_appuser.stat.exists
+
+    - name: add default to "{{ d_jdk16 }}"
+      acl:
+        entity: "{{ user }}"
+        etype: user
+        path: /opt/jdk1.6_34/
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_jdk16.stat.exists
+
+    - name: add default to "{{ d_jdk17 }}"
+      acl:
+        entity: "{{ user }}"
+        etype: user
+        path: /opt/jdk1/7_25/
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_jdk17.stat.exists
+
+    - name: add default to "{{ d_docker }}"
+      acl:
+        entity: "{{ user }}"
+        etype: user
+        path: /var/lib/docker/
+        permissions: rx
+        recursive: true
+        state: present
+      when: d_docker.stat.exists
+...

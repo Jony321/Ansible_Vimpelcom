@@ -1,0 +1,37 @@
+---
+- name: CRQ76750 adding sudo on madmz, nbarep
+  hosts: other
+  user: root
+  vars:
+    user: pavansergeev
+    rfc: CRQ76750
+  tasks:
+    - name: sudo zabbix for nbarep
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+            {{ user }} {{ ansible_hostname }} = (root) NOPASSWD: ZABBIX
+        path: /etc/sudoers.d/zabbix
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: ansible_facts['hostname'] == "nbarep"
+
+    - name: sudo zabbix, appuser
+      blockinfile:
+        backup: true
+        group: root
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ rfc }}"
+        block: |
+          {{ user }} {{ ansible_hostname }} = (appuser) NOPASSWD: ALL
+          {{ user }} {{ ansible_hostname }} = (zabbix) NOPASSWD: ALL
+        path: /etc/sudoers
+        mode: 0440
+        owner: root
+        state: present
+        validate: /usr/sbin/visudo -cf %s
+      when: ansible_facts['hostname'] == "madmz"
+...

@@ -1,0 +1,36 @@
+---
+- name: add sudo to nba hosts
+  hosts: test
+  user: root
+  vars:
+    user: pavansergeev
+    rfc: CRQ76750
+  tasks:
+    - name: does /opt/ibm exist
+      stat:
+        path: /opt/ibm
+      register: d_ibm
+
+# ---------------------- DEFAULT ACL ----------------------------
+    - name: add default to /opt/ibm
+      acl:
+        default: true
+        entity: "{{ user }}"
+        etype: user
+        path: /opt/ibm
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_ibm.stat.exists
+
+# --------------------------- SIMPLE ACL ----------------------------------
+    - name: add default to /opt/ibm
+      acl:
+        entity: "{{ user }}"
+        etype: user
+        path: /opt/ibm
+        permissions: rwx
+        recursive: true
+        state: present
+      when: d_ibm.stat.exists
+...
